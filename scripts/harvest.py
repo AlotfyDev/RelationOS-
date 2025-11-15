@@ -22,10 +22,20 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class PDFHarvester:
-    def __init__(self, config_path: str = "../config/harvester_config.json"):
+    def __init__(self, config_path: str = None):
+        if config_path is None:
+            # Get script directory and calculate project root
+            script_dir = Path(__file__).parent
+            project_root = script_dir.parent
+            config_path = str(project_root / "config" / "harvester_config.json")
+        
         self.config = self._load_config(config_path)
-        self.data_dir = Path("../data")
-        self.harvest_dir = Path("../docs/harvesting")
+        
+        # Calculate paths from script location
+        script_dir = Path(__file__).parent
+        project_root = script_dir.parent
+        self.data_dir = project_root / "data"
+        self.harvest_dir = project_root / "docs" / "harvesting"
         self.output_file = self.data_dir / "relations_harvested.parquet"
         
         # Pre-compiled regex patterns
