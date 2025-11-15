@@ -10,23 +10,38 @@ Fill all gaps + unify language + 100% automated tracking + semantic queries + AI
 
 ## Structure
 RelationOS/
-├── README.md
-├── LICENSE (MIT)
-├── .gitignore
-├── config/                    ← Configuration files
-├── data/                     ← Parquet + HDF5 data storage
-├── docs/harvesting/          ← Official PDF specifications
-├── src/RelationCore/         ← C# .NET 8.0 Core
-├── scripts/                  ← Python Harvesting Pipeline
-├── examples/
-└── tests/
+├── README.md                       ← This documentation
+├── LICENSE (MIT)                  ← Open source MIT license
+├── .gitignore                      ← Git ignore rules
+├── DataSource/                     ← Official MBSE specifications & data
+│   ├── *.pdf                       ← SysML, UML, ReqIF specifications
+│   ├── iso_deliverables_metadata.csv    ← Analysis datasets
+│   ├── iso_deliverables_metadata.parquet ← Optimized data format
+│   └── README.md                   ← Data documentation
+├── analyzer/                       ← Modern ML classification system
+│   └── models/transformer/         ← BGE transformer analyzer
+│       ├── base_classifier.py      ← Classification interface
+│       ├── bge_classifier.py       ← BAAI BGE integration
+│       ├── rule_based.py          ← Domain-specific logic
+│       ├── types.py               ← Expert parameters
+│       └── tests/                 ← Comprehensive test suite
+├── scripts/                        ← Python processing scripts
+└── *.py                           ← Analysis & utility scripts
 
 ## Quick Start
 ```bash
-# Place any PDF specification in docs/harvesting/
-python scripts/harvest.py
+# Place PDF specifications in DataSource/ directory
+# Official MBSE standards available in DataSource/
+python scripts/harvest.py                    # Run data harvesting pipeline
+python analyze_results.py                   # Analyze extracted relationships
 
-# Data will be generated to data/relations_harvested.parquet automatically
+# Run the modern transformer analyzer
+cd analyzer/models/transformer/
+python example_usage.py                     # See advanced usage examples
+
+# Run granular functionality tests
+cd tests/suite/
+python test_runner.py                       # Run all validation tests
 ```
 
 ## Progress (15 November 2025)

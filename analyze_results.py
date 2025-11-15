@@ -10,13 +10,19 @@ from pathlib import Path
 
 def analyze_harvested_relations():
     """Analyze the harvested relations data."""
-    
-    # Load the harvested data
-    data_file = Path("data/relations_harvested.parquet")
+
+    # Load the harvested data from new DataSource location
+    data_file = Path("../DataSource/iso_deliverables_metadata.parquet")
     if not data_file.exists():
-        print("ERROR: No harvested data found. Run harvest.py first.")
+        print("ERROR: No harvested data found. Data should be in ../DataSource/")
+        print("Available data files:")
+        data_dir = Path("../DataSource")
+        if data_dir.exists():
+            for file in data_dir.iterdir():
+                if file.is_file():
+                    print(f"  {file.name} ({file.stat().st_size} bytes)")
         return
-    
+
     df = pd.read_parquet(data_file)
     
     print("=" * 60)
