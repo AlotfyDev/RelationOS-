@@ -1,0 +1,163 @@
+{
+  "hardware_profile": {
+    "cpu": {
+      "model": "Intel Xeon X5690",
+      "cores": 6,
+      "frequency": "3.47GHz",
+      "architecture": "Westmere-EP (2010)",
+      "threads": 6
+    },
+    "memory": {
+      "total": "32GB",
+      "available": "8.47GB",
+      "type": "DDR3",
+      "speed": "1333-1600MHz"
+    },
+    "storage": {
+      "primary": "HDD",
+      "secondary": "1TB SSD",
+      "io_performance": "limited"
+    },
+    "gpu": {
+      "available": false,
+      "graphics": "integrated"
+    }
+  },
+
+  "sklearn_training_config": {
+    "optimized_for_xeon_x5690": {
+      "model_parameters": {
+        "n_estimators": 100,
+        "max_depth": 10,
+        "min_samples_split": 10,
+        "max_features": "sqrt"
+      },
+      "training_hyperparameters": {
+        "batch_size": 4,
+        "shuffle_batch": false,
+        "memory_efficient_mode": true,
+        "validation_split": 0.15
+      },
+      "performance_optimizations": {
+        "cpu_threads": 4,
+        "memory_preallocation_mb": 512,
+        "feature_selection": "pca_100",
+        "sparse_matrices": true
+      },
+      "estimated_training_time": "2-5 minutes",
+      "expected_memory_usage": "800MB peak"
+    }
+  },
+
+  "transformer_training_config": {
+    "optimized_for_8gb_ddr3": {
+      "model_parameters": {
+        "model_variant": "BAAI/bge-reranker-v2-m3",
+        "max_length": 256,
+        "quantization": {
+          "enabled": true,
+          "dtype": "qint8",
+          "quantize_layers": ["Linear"],
+          "weight_compression": "4bit"
+        }
+      },
+      "training_hyperparameters": {
+        "batch_size": 1,
+        "gradient_accumulation_steps": 4,
+        "num_epochs": 2,
+        "learning_rate": 3e-5,
+        "warmup_steps": 10,
+        "weight_decay": 0.01
+      },
+      "memory_optimizations": {
+        "gradient_checkpointing": true,
+        "cpu_offloading": true,
+        "mixed_precision": false,
+        "empty_cache_steps": 50,
+        "max_memory_mb": 4096
+      },
+      "performance_optimizations": {
+        "cpu_threads": 2,
+        "inference_batch_size": 1,
+        "attention_cache": false,
+        "memory_efficient_attention": true
+      },
+      "estimated_training_time": "15-30 minutes per epoch",
+      "expected_memory_usage": "2-4GB peak"
+    }
+  },
+
+  "training_pipeline_config": {
+    "phased_approach": {
+      "phase_1_sklearn": {
+        "description": "Start with low-resource sklearn model",
+        "memory_limit": "1GB",
+        "time_estimate": "5 minutes",
+        "resource_usage": "minimal"
+      },
+      "phase_2_transformer": {
+        "description": "Upgrade to BGE transformer if sklearn insufficient",
+        "memory_limit": "4GB",
+        "time_estimate": "30-45 minutes",
+        "resource_usage": "moderate"
+      }
+    }
+  },
+
+  "required_optimizations": {
+    "cpu_architectures": {
+      "westmere_ep_recommendations": {
+        "instruction_sets": [
+          "SSE4.2 support",
+          "AVX not available",
+          "prefer single-threaded operations for vectorization"
+        ],
+        "threading_limits": {
+          "max_training_threads": 4,
+          "max_inference_threads": 2
+        }
+      }
+    },
+    "memory_optimization": {
+      "available_ram_8gb": {
+        "sklearn_limit_mb": 1024,
+        "transformer_limit_mb": 4096,
+        "page_file_usage": "allow paging",
+        "memory_cleanup": "aggressive garbage collection"
+      },
+      "ddr3_latency_mitigation": {
+        "avoid_cpu_cache_missing": true,
+        "prefetch_small_batches": true,
+        "sequential_data_access": true
+      }
+    },
+    "storage_optimization": {
+      "hdd_ssd_strategy": {
+        "model_storage": "SSD",
+        "temp_files": "HDD",
+        "logs": "SSD",
+        "checkpoints": "SSD"
+      }
+    }
+  },
+
+  "performance_expectations": {
+    "sklearn_model": {
+      "training_time": "2-8 minutes",
+      "inference_latency": "5-50ms",
+      "memory_usage": "512MB-1GB",
+      "accuracy_range": "85-95%"
+    },
+    "bge_model_cpu": {
+      "training_time": "40-90 minutes",
+      "inference_latency": "100-500ms",
+      "memory_usage": "2-4GB",
+      "accuracy_range": "92-98%"
+    },
+    "system_limits": {
+      "max_concurrent_models": 1,
+      "max_inferences_per_minute": 120,
+      "recommended_models_per_session": "sklearn primary, bge fallback"
+    }
+  }
+}

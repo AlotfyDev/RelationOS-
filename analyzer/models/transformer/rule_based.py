@@ -10,7 +10,7 @@ from typing import Dict, List, Tuple, Any, Optional
 import logging
 
 from .base_classifier import BaseClassifier, register_classifier
-from .types import *
+from .relation_types import *
 
 @register_classifier("rules")
 class RuleBasedClassifier(BaseClassifier):

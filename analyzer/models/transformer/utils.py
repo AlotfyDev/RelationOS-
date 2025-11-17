@@ -10,7 +10,7 @@ import re
 from pathlib import Path
 from typing import Dict, List, Tuple, Any, Optional, Union
 
-from .types import ExpertParameters
+from .relation_types import ExpertParameters
 
 def parameter_validator(params: ExpertParameters) -> List[str]:
     """Validate expert parameters and return error messages"""

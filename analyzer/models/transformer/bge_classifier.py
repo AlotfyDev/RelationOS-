@@ -26,7 +26,7 @@ except ImportError:
     Dataset = None
 
 from .base_classifier import BaseClassifier, register_classifier
-from .types import *
+from .relation_types import *
 
 class RelationDataset(Dataset):
     """Dataset for relation classification training"""

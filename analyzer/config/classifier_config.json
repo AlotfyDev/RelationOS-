@@ -1,0 +1,65 @@
+{
+  "version": "2.0.0",
+  "model_preferences": {
+    "primary_model": "sklearn",
+    "fallback_model": "rule_based",
+    "auto_train_on_startup": false
+  },
+  "ml_classifier": {
+    "features": {
+      "tfidf": {
+        "max_features": 5000,
+        "ngram_range": [1, 2]
+      },
+      "context_window_size": 300,
+      "use_context": true
+    },
+    "performance": {
+      "confidence_threshold": 0.8,
+      "validation_split": 0.2,
+      "batch_size": 32
+    },
+    "domain_boosting": {
+      "sysml_boost": 1.2,
+      "uml_boost": 1.0,
+      "traceability_boost": 1.1
+    }
+  },
+  "training": {
+    "auto_train_on_data_found": true,
+    "training_data_format": {
+      "columns": ["relation_name", "domain", "context"],
+      "domain_column": "domain",
+      "relation_column": "relation_name",
+      "context_column": "context"
+    },
+    "data_directories": ["data", "training_data", "../data"]
+  },
+  "inference": {
+    "default_mode": "express",
+    "context_window_size": 300,
+    "batch_processing_enabled": false,
+    "confidence_threshold": 0.8
+  },
+  "expert_parameters": {
+    "validation_split": 0.2,
+    "confidence_threshold": 0.8,
+    "sysml_boost": 1.2,
+    "uml_boost": 1.0,
+    "context_window_size": 300,
+    "use_context_window": true
+  },
+  "monitoring": {
+    "enabled": true,
+    "performance_tracking": true,
+    "detailed_logging": false,
+    "max_log_entries": 1000
+  },
+  "model_storage": {
+    "base_directory": "models",
+    "sklearn_directory": "models/sklearn",
+    "transformer_directory": "models/transformer",
+    "save_trained_models": true,
+    "load_existing_models": true
+  }
+}

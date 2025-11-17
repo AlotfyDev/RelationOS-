@@ -7,18 +7,26 @@ Demonstrates the benefits of the new modular architecture
 import sys
 from pathlib import Path
 
-# Add the transformer package to the path (for testing)
-sys.path.insert(0, str(Path(__file__).parent))
-
-from transformer import (
-    BGEClassifier, SklearnFallbackClassifier, RuleBasedClassifier,
-    ExpertParameters, ClassificationMode
-)
+# Import the classifier classes directly from their modules
+try:
+    # Try relative imports first (when run as module)
+    from .bge_classifier import BGEClassifier
+    from .sklearn_fallback import SklearnFallbackClassifier
+    from .rule_based import RuleBasedClassifier
+    from .relation_types import ExpertParameters, ClassificationMode
+except ImportError:
+    # Fall back to absolute imports (when run as script)
+    from bge_classifier import BGEClassifier
+    from sklearn_fallback import SklearnFallbackClassifier
+    from rule_based import RuleBasedClassifier
+    from relation_types import ExpertParameters, ClassificationMode
 
 def test_modular_classifiers():
     """Test the new modular classifier architecture"""
 
-    print("🔬 Testing RelationOS Modular Transformer Classifiers")
+    print("🔬 Testing RelationOS CPU-Only Classifier")
+    print("🚫 BAI BGE Skipped (requires torch transformers)")
+    print("✅ Testing Sklearn Fallback (CPU-only)")
     print("=" * 60)
 
     # Test data
@@ -38,11 +46,9 @@ def test_modular_classifiers():
         "Service dependency graph analysis"
     ]
 
-    # Test configurations
+    # Test configurations - CPU-only only
     configurations = [
-        ("BAAI BGE Classifier", BGEClassifier, ClassificationMode.MODE_EXPERT),
-        ("Sklearn Fallback", SklearnFallbackClassifier, ClassificationMode.MODE_STANDARD),
-        ("Rule-Based Enhanced", RuleBasedClassifier, ClassificationMode.MODE_EXPRESS)
+        ("Sklearn Fallback (CPU-Only)", SklearnFallbackClassifier, ClassificationMode.MODE_STANDARD),
     ]
 
     # Expert parameters for maximum accuracy

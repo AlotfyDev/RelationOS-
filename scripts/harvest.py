@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-RelationOS Harvester v2.0 – Enhanced Edition
-Supports PyMuPDF + pandas + parquet with robust error handling
+RelationOS ML-Powered Harvester v3.0 – Smart Semantic Classification
+Uses ML classifiers instead of primitive regex patterns for superior accuracy
 """
 
 import os
@@ -21,6 +21,15 @@ import fitz  # PyMuPDF
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# ML Classifiers - REPLACING regex with intelligent semantic analysis
+try:
+    from analyzer.models.transformer.sklearn_fallback import SklearnFallbackClassifier
+    from analyzer.models.transformer.relation_types import ExpertParameters, ClassificationMode
+    ML_AVAILABLE = True
+except ImportError:
+    ML_AVAILABLE = False
+    logger.warning("⚠️ ML classifiers not available - falling back to regex patterns")
+
 class PDFHarvester:
     def __init__(self, config_path: str = None):
         if config_path is None:
@@ -28,33 +37,67 @@ class PDFHarvester:
             script_dir = Path(__file__).parent
             project_root = script_dir.parent
             config_path = str(project_root / "config" / "harvester_config.json")
-        
+
         self.config = self._load_config(config_path)
-        
+
         # Calculate paths from script location
         script_dir = Path(__file__).parent
         project_root = script_dir.parent
         self.data_dir = project_root / "data"
         self.harvest_dir = project_root / "docs" / "harvesting"
         self.output_file = self.data_dir / "relations_harvested.parquet"
-        
-        # Pre-compiled regex patterns
-        self.patterns = [
-            re.compile(r'«([\w]+)»', re.IGNORECASE),
-            re.compile(r'([A-Z][\w]*)\s+(relationship|relation)', re.IGNORECASE),
-            re.compile(r'(satisfies|refines|allocates|verifies|derives|traces\s*to|composes|aggregates|calls)\s+([\w]+)', re.IGNORECASE),
-        ]
-        
-        # Domain patterns
-        self.domain_patterns = {
-            'traceability': ["satisfies", "refines", "allocates", "verifies", "derives", "traces"],
-            'structural': ["composition", "aggregation", "association", "generalization"],
-            'behavioral': ["calls", "sends", "flow", "precedes"],
-            'interface': ["connects", "implements", "realizes"],
-            'safety': ["prevents", "causes", "mitigates"],
-            'security': ["authenticate", "authorize", "encrypt"],
-            'temporal': ["before", "after", "during", "concurrent"]
-        }
+
+        # 🚀 ML CLASSIFIERS - DEFAULT APPROACH INSTEAD OF REGEX
+        self.ml_classifier = None
+        if ML_AVAILABLE:
+            # Initialize ML classifier with expert parameters for maximum accuracy
+            expert_params = ExpertParameters(
+                sysml_boost=1.3,      # Boost MBSE-specific relations
+                uml_boost=1.1,        # Boost modeling relations
+                context_window_size=300,  # Larger context window for better understanding
+                use_context_window=True,
+                confidence_threshold=0.8    # High accuracy threshold
+            )
+
+            logger.info("🎯 Initializing ML classifier - replacing primitive regex patterns")
+            try:
+                self.ml_classifier = SklearnFallbackClassifier(
+                    mode=ClassificationMode.MODE_STANDARD,
+                    expert_params=expert_params
+                )
+
+                if self.ml_classifier.initialize():
+                    logger.info("✅ ML classifier initialized - intelligent semantic analysis ready!")
+                else:
+                    logger.warning("⚠️ ML classifier failed to initialize - using fallback methods")
+                    self.ml_classifier = None
+
+            except Exception as e:
+                logger.warning(f"⚠️ ML classifier initialization failed: {e} - using fallback methods")
+                self.ml_classifier = None
+
+        else:
+            logger.warning("❌ ML classifiers not available - regex fallback in use")
+
+        # Fallback patterns only if ML is not available
+        if self.ml_classifier is None:
+            logger.warning("🔄 Using primitive regex patterns due to ML unavailability")
+            self.patterns = [
+                re.compile(r'«([\w]+)»', re.IGNORECASE),
+                re.compile(r'([A-Z][\w]*)\s+(relationship|relation)', re.IGNORECASE),
+                re.compile(r'(satisfies|refines|allocates|verifies|derives|traces\s*to|composes|aggregates|calls)\s+([\w]+)', re.IGNORECASE),
+            ]
+
+            # Domain patterns (legacy fallback)
+            self.domain_patterns = {
+                'traceability': ["satisfies", "refines", "allocates", "verifies", "derives", "traces"],
+                'structural': ["composition", "aggregation", "association", "generalization"],
+                'behavioral': ["calls", "sends", "flow", "precedes"],
+                'interface': ["connects", "implements", "realizes"],
+                'safety': ["prevents", "causes", "mitigates"],
+                'security': ["authenticate", "authorize", "encrypt"],
+                'temporal': ["before", "after", "during", "concurrent"]
+            }
 
     def _load_config(self, config_path: str) -> Dict:
         """Load harvester configuration."""
@@ -98,19 +141,177 @@ class PDFHarvester:
         return "Uncategorized"
 
     def extract_relations_from_page(self, page_text: str, page_num: int, pdf_name: str) -> List[Dict]:
-        """Extract relations from a single page."""
+        """Extract relations intelligently using ML classifier instead of primitive regex."""
         relations = []
-        
+
+        # 🌟 USE ML CLASSIFIER - DEFAULT EXTRACTION METHOD 🌟
+        if self.ml_classifier and self.ml_classifier.is_ready_for_inference():
+            try:
+                logger.info(f"🎯 Using ML classifier for page {page_num + 1} - intelligent semantic analysis")
+
+                # Strategy: Find potential relation entities first, then classify them
+                # This replaces primitive regex pattern matching with semantic understanding
+
+                # 1. Split page text into sentence/context fragments
+                sentences = self._split_text_into_contexts(page_text, window_size=300)
+                logger.info(f"   📄 Processing {len(sentences)} text fragments for semantic analysis")
+
+                relations_found = []
+
+                # 2. Process each context fragment with ML classification
+                for i, context in enumerate(sentences):
+                    logger.info(f"   🔬 Fragment {i+1}/{len(sentences)}: '{context[:50]}...'")
+
+                    # Extract potential relations from this context using ML
+                    context_relations = self._extract_relations_from_context_ml(
+                        context, page_num, pdf_name, f"ctx_{i}"
+                    )
+                    relations_found.extend(context_relations)
+
+                    if i > 0 and i % 10 == 0:  # Progress indication
+                        logger.info(f"   📊 Processed {i}/{len(sentences)} fragments - {len(relations_found)} relations found")
+
+                relations.extend(relations_found)
+                logger.info(f"   ✅ ML extraction complete: {len(relations)} relations from page {page_num + 1}")
+
+            except Exception as e:
+                logger.warning(f"⚠️ ML extraction failed for page {page_num}, falling back to regex: {e}")
+                return self._extract_relations_fallback_regex(page_text, page_num, pdf_name)
+
+        # 🔄 FALLBACK: Use primitive regex patterns if ML unavailable
+        else:
+            logger.warning(f"♻️ Using regex fallback for page {page_num + 1}")
+            relations = self._extract_relations_fallback_regex(page_text, page_num, pdf_name)
+
+        return relations
+
+    def _split_text_into_contexts(self, text: str, window_size: int = 300) -> List[str]:
+        """Split text into context fragments for ML analysis."""
+        if not text.strip():
+            return []
+
+        # Split by sentences/paragraphs
+        import re
+        sentences = re.split(r'(?<=[.!?\n])\s+', text)
+
+        contexts = []
+        current_context = ""
+        current_length = 0
+
+        for sentence in sentences:
+            if current_length + len(sentence) <= window_size:
+                current_context += sentence + " "
+                current_length += len(sentence) + 1
+            else:
+                if current_context.strip():
+                    contexts.append(current_context.strip())
+                current_context = sentence + " "
+                current_length = len(sentence) + 1
+
+        if current_context.strip():
+            contexts.append(current_context.strip())
+
+        return contexts if contexts else [text]  # Fallback to full text
+
+    def _extract_relations_from_context_ml(self, context: str, page_num: int, pdf_name: str, context_id: str) -> List[Dict]:
+        """Use ML classifier to extract relations from text context."""
+        relations = []
+
+        try:
+            # Strategy: Search for potential relation keywords and entities
+            # Then use ML classifier for intelligent validation
+
+            relation_words = [
+                "satisfies", "refines", "allocates", "verifies", "derives", "traces",
+                "composes", "aggregates", "calls", "connects", "implements", "realizes",
+                "prevents", "causes", "mitigates", "authenticates", "authorizes", "encrypts",
+                "before", "after", "during", "concurrent"
+            ]
+
+            # Find potential relation mentions
+            context_lower = context.lower()
+            found_relations = []
+
+            for word in relation_words:
+                if word in context_lower:
+                    # Extract phrase around the relation word
+                    start = max(0, context_lower.find(word) - 50)
+                    end = min(len(context), context_lower.find(word) + len(word) + 50)
+                    phrase = context[start:end].strip()
+
+                    found_relations.append({
+                        'text': phrase,
+                        'relation_word': word,
+                        'context': context
+                    })
+
+            # Also extract text in angle brackets «relation»
+            angle_matches = re.findall(r'«([\w\s]+)»', context)
+            for angle_match in angle_matches:
+                if any(word in angle_match.lower() for word in relation_words):
+                    found_relations.append({
+                        'text': angle_match,
+                        'relation_word': None,
+                        'context': context
+                    })
+
+            # Use ML classifier to validate and classify each found relation
+            for found in found_relations:
+                try:
+                    # Classify the relation using ML
+                    result = self.ml_classifier.classify_relation(
+                        found['text'],
+                        found['context']
+                    )
+
+                    # Only include high-confidence classifications
+                    if result.confidence >= self.config['confidence_threshold']:
+                        # Generate unique ID
+                        content_hash = hashlib.md5(
+                            f"{pdf_name}_{page_num}_{found['text']}_{context_id}".encode()
+                        ).hexdigest()[:8]
+
+                        relation_data = {
+                            'id': f"{pdf_name}_{content_hash}",
+                            'source_standard': pdf_name.replace('.pdf', ''),
+                            'source_document': pdf_name,
+                            'relation_name': found['text'],
+                            'domain': result.primary_domain,
+                            'page': page_num + 1,
+                            'confidence': result.confidence,
+                            'harvested_at': datetime.now().isoformat(),
+                            'extraction_method': 'ml_intelligence',  # ✨ NEW: ML classification instead of regex!
+                            'relation_word': found['relation_word'],
+                            'context_snippet': found['context'][:200] + "..." if len(found['context']) > 200 else found['context'],
+                            'alternative_domains': result.alternative_domains,
+                            'feature_contributions': result.feature_contributions
+                        }
+
+                        relations.append(relation_data)
+
+                except Exception as e:
+                    logger.debug(f"ML classification failed for '{found['text'][:50]}...': {e}")
+                    continue
+
+        except Exception as e:
+            logger.warning(f"ML extraction failed for context: {e}")
+
+        return relations
+
+    def _extract_relations_fallback_regex(self, page_text: str, page_num: int, pdf_name: str) -> List[Dict]:
+        """Fallback: Use primitive regex patterns when ML is unavailable."""
+        relations = []
+
         for pattern in self.patterns:
             try:
                 for match in pattern.finditer(page_text):
                     if match.groups():
                         rel_name = match.group(1) if len(match.groups()) >= 1 else match.group(0)
                         rel_name = rel_name.strip('«»').title()
-                        
+
                         # Generate unique ID
                         content_hash = hashlib.md5(f"{pdf_name}_{page_num}_{rel_name}".encode()).hexdigest()[:8]
-                        
+
                         relation = {
                             'id': f"{pdf_name}_{content_hash}",
                             'source_standard': pdf_name.replace('.pdf', ''),
@@ -120,13 +321,12 @@ class PDFHarvester:
                             'page': page_num + 1,
                             'confidence': self.config['confidence_threshold'],
                             'harvested_at': datetime.now().isoformat(),
-                            'extraction_method': 'regex_pattern'
+                            'extraction_method': 'regex_fallback'  # Indicates fallback usage
                         }
                         relations.append(relation)
             except Exception as e:
                 logger.warning(f"Pattern matching failed on page {page_num}: {e}")
-                continue
-                
+
         return relations
 
     def process_single_pdf(self, pdf_path: Path) -> List[Dict]:

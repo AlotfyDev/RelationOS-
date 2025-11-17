@@ -7,7 +7,7 @@ Abstract interface for all relation classifiers with unified API
 import abc
 from typing import Dict, List, Optional, Any
 import logging
-from .types import ClassificationResult, ClassificationMode, ExpertParameters
+from .relation_types import ClassificationResult, ClassificationMode, ExpertParameters
 from pathlib import Path
 
 class BaseClassifier:

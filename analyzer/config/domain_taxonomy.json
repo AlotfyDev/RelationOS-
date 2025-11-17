@@ -1,0 +1,189 @@
+{
+  "primary_domains": {
+    "Traceability": {
+      "description": "Requirements tracing and verification relationships",
+      "subdomains": {
+        "requirements": {
+          "keywords": ["satisfies", "verifies", "validates", "traces to", "refines", "allocates"],
+          "description": "Requirements derivation and verification relationships"
+        },
+        "implementation": {
+          "keywords": ["implements", "realizes", "derives from"],
+          "description": "Implementation realization relationships"
+        }
+      }
+    },
+
+    "Structural": {
+      "description": "Composition and architectural relationships",
+      "subdomains": {
+        "composition": {
+          "keywords": ["composes", "contains", "aggregates", "consists of"],
+          "description": "Component composition relationships"
+        },
+        "association": {
+          "keywords": ["associates", "connects", "relates to"],
+          "description": "Association relationships between components"
+        },
+        "inheritance": {
+          "keywords": ["inherits from", "derives from", "kind of"],
+          "description": "Inheritance and specialization relationships"
+        }
+      }
+    },
+
+    "Behavioral": {
+      "description": "Process, activity, and interaction relationships",
+      "subdomains": {
+        "communication": {
+          "keywords": ["calls", "sends", "receives", "communicates"],
+          "description": "Communication and data flow relationships"
+        },
+        "sequencing": {
+          "keywords": ["before", "after", "precedes", "follows"],
+          "description": "Temporal sequencing relationships"
+        },
+        "interaction": {
+          "keywords": ["interacts", "collaborates", "depends on"],
+          "description": "Component interaction relationships"
+        }
+      }
+    },
+
+    "Interface": {
+      "description": "Port, connector, and system boundary relationships",
+      "subdomains": {
+        "ports": {
+          "keywords": ["port", "interface", "connector", "boundary"],
+          "description": "Port and interface relationships"
+        },
+        "services": {
+          "keywords": ["provides", "consumes", "requires"],
+          "description": "Service provider/consumer relationships"
+        }
+      }
+    },
+
+    "Safety": {
+      "description": "Risk, hazard, and mitigation relationships",
+      "subdomains": {
+        "hazards": {
+          "keywords": ["causes", "prevents", "mitigates", "affects"],
+          "description": "Hazard and risk relationships"
+        },
+        "controls": {
+          "keywords": ["controls", "monitors", "detects"],
+          "description": "Safety control and monitoring relationships"
+        }
+      }
+    },
+
+    "Security": {
+      "description": "Authentication, authorization, and protection relationships",
+      "subdomains": {
+        "authentication": {
+          "keywords": ["authenticates", "identifies", "verifies"],
+          "description": "Authentication and identity relationships"
+        },
+        "authorization": {
+          "keywords": ["authorizes", "grants", "permits"],
+          "description": "Authorization and permission relationships"
+        },
+        "protection": {
+          "keywords": ["encrypts", "secures", "protects"],
+          "description": "Data protection and security relationships"
+        }
+      }
+    },
+
+    "Temporal": {
+      "description": "Time-based, sequencing, and scheduling relationships",
+      "subdomains": {
+        "scheduling": {
+          "keywords": ["during", "while", "concurrent with"],
+          "description": "Event scheduling and timing relationships"
+        },
+        "sequencing": {
+          "keywords": ["before", "after", "precedes", "follows"],
+          "description": "Temporal ordering relationships"
+        }
+      }
+    },
+
+    "Uncategorized": {
+      "description": "Advanced or complex relationships requiring specialized classification",
+      "subdomains": {
+        "general": {
+          "keywords": [],
+          "description": "General relationships not fitting other categories"
+        },
+        "complex": {
+          "keywords": ["depends on", "related to", "associated with"],
+          "description": "Complex or specialized relationships"
+        }
+      }
+    }
+  },
+
+  "relationship_types": [
+    "satisfies",
+    "refines",
+    "verifies",
+    "validates",
+    "implements",
+    "realizes",
+    "derives from",
+    "traces to",
+    "allocates",
+    "composes",
+    "contains",
+    "aggregates",
+    "associates",
+    "connects",
+    "inherits from",
+    "kind of",
+    "calls",
+    "sends",
+    "receives",
+    "communicates",
+    "before",
+    "after",
+    "precedes",
+    "follows",
+    "interacts",
+    "collaborates",
+    "provides",
+    "consumes",
+    "requires",
+    "causes",
+    "prevents",
+    "mitigates",
+    "affects",
+    "controls",
+    "monitors",
+    "detects",
+    "authenticates",
+    "identifies",
+    "authorizes",
+    "grants",
+    "permits",
+    "encrypts",
+    "secures",
+    "protects",
+    "during",
+    "while",
+    "concurrent with",
+    "depends on",
+    "related to",
+    "associated with"
+  ],
+
+  "metadata": {
+    "version": "2.0.0",
+    "domains": 8,
+    "subdomains": 20,
+    "relationship_types": 45,
+    "last_updated": "2025-11-16",
+    "description": "MBSE ontology domain taxonomy for ML relation classification"
+  }
+}

@@ -23,7 +23,7 @@ except ImportError:
     SKLEARN_AVAILABLE = False
 
 from .base_classifier import BaseClassifier, register_classifier
-from .types import *
+from .relation_types import *
 
 @register_classifier("sklearn")
 class SklearnFallbackClassifier(BaseClassifier):

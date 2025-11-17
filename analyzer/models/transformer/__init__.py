@@ -5,7 +5,7 @@ State-of-the-art ML classifier using BAAI/bge-reranker-v2-m3
 Optimized for accuracy with expert tunable parameters and feed-forward learning
 """
 
-from .types import ClassificationResult, ExpertParameters, ClassificationMode
+from .relation_types import ClassificationResult, ExpertParameters, ClassificationMode
 from .base_classifier import BaseClassifier
 from .bge_classifier import BGEClassifier
 from .sklearn_fallback import SklearnFallbackClassifier
